@@ -35,7 +35,7 @@ export const login = async (req, res) => {
     const validUser = user && isMatch;
     if (!validUser)
       return res.status(400).json({ message: "Invalid email or password" });
-    const token = createJWT({ userId: validUser._id, role: validUser.role });
+    const token = createJWT({ userId: user._id, role: user.role });
     res.status(200).json({ message: "Login successful", token });
     res.cookie("token", token, {
       httpOnly: true,
