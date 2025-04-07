@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./mern_backend
+    container_name: node-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mern_backend:/app
+      - /app/node_modules
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/dockerdb
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./mern_front
+    container_name: react-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./mern_front:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Hot reloading fix for Docker
+
+volumes:
+  mongo-data:
